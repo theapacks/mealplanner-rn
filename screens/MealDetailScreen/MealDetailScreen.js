@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, Image } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import HeaderButton from '../../components/HeaderButton/HeaderButton';
-
+import { toogleFavourite } from '../../store/actions/meals';
 
 import styles from './MealDetailScreen.styles';
 
-let mealDetailProps, mealId, selectedMeal  = null;
+let mealDetailProps, selectedMeal  = null;
 
 const ListItem = props => {
     return (
@@ -21,9 +21,20 @@ const ListItem = props => {
 
 const MealDetailScreen = (props) => {
     mealDetailProps = props;
-    mealId = props.route.params.mealId;
-    const loadedMeals = useSelector(state => state.meals.meals)
+    const mealId = props.route.params.mealId;
+    const loadedMeals = useSelector(state => state.meals.meals);
     selectedMeal = loadedMeals.find(meal => meal.id === mealId);
+
+    const dispatch = useDispatch();
+    const toggleFavouriteHandler = useCallback(() => {
+      dispatch(toogleFavourite(mealId));
+    }, [dispatch, mealId]);
+
+    useEffect(() => {
+      //props.navigation.setParams({ mealTitle: selectedMeal.title })
+      props.navigation.setParams({toggleFav: toggleFavouriteHandler})
+    }, [toggleFavouriteHandler]);
+
     return (
         <ScrollView>
             <Image source={{ uri: selectedMeal.imageUrl }} style={styles.image} />
@@ -45,6 +56,7 @@ const MealDetailScreen = (props) => {
 };
 // <Button title="Go Home" onPress={() => {props.navigation.popToTop()}} />
 export const MealDetailScreenOptions = () => {   
+    // const toggleFavourite = mealDetailProps.route.params.toggleFav;
     return {
         headerTitle: () => <Text>{selectedMeal.title}</Text>,
         headerRight: () => (
@@ -52,10 +64,7 @@ export const MealDetailScreenOptions = () => {
             <Item
                 title="Menu"
                 iconName="ios-star"
-                onPress={() => {
-                    //mealDetailProps.navigation.toggleDrawer();
-                    console.log('Mark as favorite!');
-                }}
+                onPress={mealDetailProps.route.params.toggleFav}
             />
             </HeaderButtons>
       )
