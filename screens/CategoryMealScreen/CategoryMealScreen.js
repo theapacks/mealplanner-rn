@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Button, FlatList } from 'react-native';
-
+import { useSelector } from 'react-redux';
 import MealList from '../../components/MealList/MealList';
-import { MEALS } from '../../data/dummy-data';
 
 const CategoryMealScreen = props => {
+    const loadedMeals = useSelector(state => state.meals.filteredMeals);
     const catId = props.route.params.categoryId;
-    const displayedMeals = MEALS.filter(meal => meal.categoryIds.indexOf(catId));
+    const displayedMeals = loadedMeals.filter(meal => meal.categoryIds.indexOf(catId));
 
     return <MealList mealsList={displayedMeals} navigation={props.navigation} />;
 };

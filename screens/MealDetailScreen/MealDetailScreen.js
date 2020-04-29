@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, Image } from 'react-native';
-
-import { MEALS } from '../../data/dummy-data';
+import { useSelector } from 'react-redux';
 
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
@@ -23,7 +22,8 @@ const ListItem = props => {
 const MealDetailScreen = (props) => {
     mealDetailProps = props;
     mealId = props.route.params.mealId;
-    selectedMeal = MEALS.find(meal => meal.id === mealId);
+    const loadedMeals = useSelector(state => state.meals.meals)
+    selectedMeal = loadedMeals.find(meal => meal.id === mealId);
     return (
         <ScrollView>
             <Image source={{ uri: selectedMeal.imageUrl }} style={styles.image} />
